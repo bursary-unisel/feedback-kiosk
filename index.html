@@ -169,6 +169,31 @@
     .corner-buttons button:hover {
       background-color: #e0e0e0;
     }
+
+    /* Popup custom */
+    .custom-alert {
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border: 2px solid #6abf69;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      z-index: 10001;
+      font-size: 18px;
+      display: none;
+    }
+    .custom-alert button {
+      margin-top: 15px;
+      padding: 8px 18px;
+      background: #6abf69;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -207,7 +232,13 @@
     <div class="spinner"></div>
   </div>
 
-  <!-- Hanya ikon Fullscreen -->
+  <!-- Popup custom -->
+  <div class="custom-alert" id="alertBox">
+    <div id="alertMsg">Teks alert di sini</div>
+    <button onclick="hideAlert()">OK</button>
+  </div>
+
+  <!-- Fullscreen -->
   <div class="corner-buttons">
     <button onclick="toggleFullscreen()" title="Fullscreen">🖥️</button>
   </div>
@@ -265,6 +296,15 @@
       });
     }
 
+    function showAlert(message) {
+      document.getElementById('alertMsg').innerText = message;
+      document.getElementById('alertBox').style.display = 'block';
+    }
+
+    function hideAlert() {
+      document.getElementById('alertBox').style.display = 'none';
+    }
+
     const scriptURL = "https://script.google.com/macros/s/AKfycbw3vv-MdT2l9tPmag3ELeVfIqQMzyBkCb5FbIGDc8H2k3y66lOKn8qq0oY7BMlKR_q4xQ/exec";
 
     function submitFeedback() {
@@ -272,7 +312,7 @@
       const comment = document.getElementById('comment').value;
 
       if (!counter || !selectedRating || !selectedStaff) {
-        alert("Sila pilih kaunter, rating & staf.");
+        showAlert("Sila pilih kampus, rating & staf.");
         return;
       }
 
@@ -297,7 +337,7 @@
             document.getElementById('result').innerText = "";
           }, 5000);
         })
-        .catch(err => alert("Ralat: " + err))
+        .catch(err => showAlert("Ralat: " + err))
         .finally(() => {
           document.getElementById('loadingOverlay').style.display = 'none';
         });
