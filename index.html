@@ -185,9 +185,9 @@ function submitFeedback() {
     document.getElementById('comment').value = "";
     document.querySelectorAll('.stars span').forEach(s => s.classList.remove('selected'));
     selectedRating = 0;
+    document.getElementById('ratingValue').innerText = "Pilih rating";
     document.getElementById('staffPhoto').innerHTML = "";
 
-    // Hilangkan mesej lepas 5 saat
     setTimeout(() => {
       resultText.innerText = "";
     }, 5000);
