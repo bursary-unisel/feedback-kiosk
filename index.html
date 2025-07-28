@@ -11,6 +11,14 @@
       background-color: #fef9f4;
       color: #333;
     }
+    .container {
+      background-color: #fff5ea;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
     h1 { color: #333; }
     .stars span {
       font-size: 50px;
@@ -107,32 +115,34 @@
   </style>
 </head>
 <body>
-  <h1>Bagaimana layanan kami?</h1>
+  <div class="container">
+    <h1>Bagaimana layanan kami?</h1>
 
-  <label for="counter">Pilih Kaunter:</label><br>
-  <select id="counter" onchange="updateStaffGallery()">
-    <option value="">-- Pilih Kaunter --</option>
-    <option value="Shah Alam">Shah Alam</option>
-    <option value="Bestari Jaya">Bestari Jaya</option>
-  </select>
+    <label for="counter">Pilih Kaunter:</label><br>
+    <select id="counter" onchange="updateStaffGallery()">
+      <option value="">-- Pilih Kaunter --</option>
+      <option value="Shah Alam">Shah Alam</option>
+      <option value="Bestari Jaya">Bestari Jaya</option>
+    </select>
 
-  <div class="stars" id="starRating">
-    <span data-value="1">★</span>
-    <span data-value="2">★</span>
-    <span data-value="3">★</span>
-    <span data-value="4">★</span>
-    <span data-value="5">★</span>
+    <div class="stars" id="starRating">
+      <span data-value="1">★</span>
+      <span data-value="2">★</span>
+      <span data-value="3">★</span>
+      <span data-value="4">★</span>
+      <span data-value="5">★</span>
+    </div>
+    <p id="ratingValue">Pilih rating</p>
+
+    <div class="staff-gallery" id="staffGallery"></div>
+
+    <div class="form-section">
+      <textarea id="comment" placeholder="Komen tambahan..."></textarea>
+      <button onclick="submitFeedback()">Hantar</button>
+    </div>
+
+    <p id="result"></p>
   </div>
-  <p id="ratingValue">Pilih rating</p>
-
-  <div class="staff-gallery" id="staffGallery"></div>
-
-  <div class="form-section">
-    <textarea id="comment" placeholder="Komen tambahan..."></textarea>
-    <button onclick="submitFeedback()">Hantar</button>
-  </div>
-
-  <p id="result"></p>
 
   <div id="loadingOverlay">
     <div class="spinner"></div>
