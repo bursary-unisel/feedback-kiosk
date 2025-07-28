@@ -76,6 +76,10 @@
       font-size: 14px;
       font-weight: bold;
     }
+    .staff-counter {
+      font-size: 13px;
+      color: #666;
+    }
     #loadingOverlay {
       position: fixed;
       top: 0;
@@ -140,14 +144,14 @@ let selectedStaff = "";
 
 const staffList = {
   "Shah Alam": [
-    { name: "Encik Muhammad Arif Bin Mohamad", photo: "images/Muhammad Arif Bin Mohamad.png" },
-    { name: "Encik Muhamad Nur Firdaus Bin Hamidun", photo: "images/Muhamad Nur Firdaus Bin Hamidun.png" },
-    { name: "Puan Anna Solehah Binti A.Kamazar", photo: "images/Anna Solehah Binti A.Kamazar.png" }
+    { name: "Encik Muhammad Arif Bin Mohamad", photo: "images/Muhammad Arif Bin Mohamad.png", counter: "Kaunter 1" },
+    { name: "Encik Muhamad Nur Firdaus Bin Hamidun", photo: "images/Muhamad Nur Firdaus Bin Hamidun.png", counter: "Kaunter 2" },
+    { name: "Puan Anna Solehah Binti A.Kamazar", photo: "images/Anna Solehah Binti A.Kamazar.png", counter: "Kaunter 3" }
   ],
   "Bestari Jaya": [
-    { name: "Encik Anuwar Zamani bin Samat", photo: "images/Anuwar Zamani bin Samat.png" },
-    { name: "Puan Noralyda Binti Mohamed Mahkrus", photo: "images/Noralyda Binti Mohamed Mahkrus.png" },
-    { name: "Puan Siti Nur Fatihah binti Ahmad Sabki", photo: "images/Siti Nur Fatihah binti Ahmad Sabki.png" }
+    { name: "Encik Anuwar Zamani bin Samat", photo: "images/Anuwar Zamani bin Samat.png", counter: "Kaunter 1" },
+    { name: "Puan Noralyda Binti Mohamed Mahkrus", photo: "images/Noralyda Binti Mohamed Mahkrus.png", counter: "Kaunter 2" },
+    { name: "Puan Siti Nur Fatihah binti Ahmad Sabki", photo: "images/Siti Nur Fatihah binti Ahmad Sabki.png", counter: "Kaunter 3" }
   ]
 };
 
@@ -173,7 +177,11 @@ function updateStaffGallery() {
   staffList[counter].forEach(staff => {
     const div = document.createElement('div');
     div.className = 'staff-item';
-    div.innerHTML = `<img src="${staff.photo}" alt="${staff.name}"><div class="staff-name">${staff.name}</div>`;
+    div.innerHTML = `
+      <img src="${staff.photo}" alt="${staff.name}">
+      <div class="staff-name">${staff.name}</div>
+      <div class="staff-counter">[${staff.counter}]</div>
+    `;
     div.onclick = () => {
       document.querySelectorAll('.staff-item').forEach(el => el.classList.remove('selected'));
       div.classList.add('selected');
