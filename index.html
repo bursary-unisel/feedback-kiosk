@@ -8,7 +8,7 @@
       font-family: Arial, sans-serif; 
       text-align: center; 
       padding: 20px; 
-      background-color: #fef9f4; /* pastel peach */ 
+      background-color: #fef9f4; 
       color: #333; 
     }
     h1 { color: #333; }
@@ -16,10 +16,10 @@
     .stars span.selected { color: gold; }
     select, textarea { width: 80%; padding: 10px; margin: 10px; font-size: 16px; }
     button { padding: 15px 30px; background: green; color: white; font-size: 18px; border: none; cursor: pointer; border-radius: 8px; }
-    #result { margin-top: 20px; font-weight: bold; color: green; }
+    #result { margin-top: 20px; font-weight: bold; color: green; transition: opacity 0.5s; }
     .staff-photo { margin-top: 10px; }
     .staff-photo img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid #ccc; box-shadow: 0px 4px 10px rgba(0,0,0,0.1); }
-    
+
     /* Loading Overlay */
     #loadingOverlay {
       position: fixed;
@@ -34,7 +34,6 @@
       z-index: 9999;
     }
 
-    /* Spinner Animation */
     .spinner {
       width: 60px;
       height: 60px;
@@ -78,9 +77,7 @@
   </select>
 
   <!-- Gambar staf -->
-  <div class="staff-photo" id="staffPhoto">
-    <!-- gambar akan muncul sini -->
-  </div>
+  <div class="staff-photo" id="staffPhoto"></div>
 
   <!-- Komen -->
   <textarea id="comment" placeholder="Komen tambahan..."></textarea>
@@ -97,9 +94,6 @@
 <script>
 let selectedRating = 0;
 
-/* ==============================
-   SENARAI STAF MENGIKUT KAUNTER
-   ============================== */
 const staffList = {
   "Shah Alam": [
     { name: "Encik Muhammad Arif Bin Mohamad", photo: "images/Muhammad Arif Bin Mohamad.png" },
@@ -113,9 +107,6 @@ const staffList = {
   ]
 };
 
-/* ==============================
-   RATING BINTANG
-   ============================== */
 document.querySelectorAll('.stars span').forEach(star => {
   star.addEventListener('click', function() {
     selectedRating = this.dataset.value;
@@ -127,21 +118,17 @@ document.querySelectorAll('.stars span').forEach(star => {
   });
 });
 
-/* ==============================
-   UPDATE SENARAI STAF IKUT KAUNTER
-   ============================== */
 function updateStaffList() {
   let counter = document.getElementById('counter').value;
   let staffSelect = document.getElementById('staff');
-  staffSelect.innerHTML = ""; // kosongkan dulu
-  document.getElementById('staffPhoto').innerHTML = ""; // kosongkan gambar
+  staffSelect.innerHTML = "";
+  document.getElementById('staffPhoto').innerHTML = "";
 
   if (!counter) {
     staffSelect.innerHTML = `<option value="">-- Pilih Kaunter Dulu --</option>`;
     return;
   }
 
-  // Masukkan staf ikut kaunter dipilih
   let staffs = staffList[counter];
   staffSelect.innerHTML = `<option value="">-- Pilih Staf --</option>`;
   staffs.forEach(staff => {
@@ -153,9 +140,6 @@ function updateStaffList() {
   });
 }
 
-/* ==============================
-   PAPARKAN GAMBAR STAF
-   ============================== */
 function showStaffPhoto() {
   let staffSelect = document.getElementById('staff');
   let selectedOption = staffSelect.options[staffSelect.selectedIndex];
@@ -168,14 +152,8 @@ function showStaffPhoto() {
   }
 }
 
-/* ==============================
-   GOOGLE SCRIPT API URL
-   ============================== */
 const scriptURL = "https://script.google.com/macros/s/AKfycbw3vv-MdT2l9tPmag3ELeVfIqQMzyBkCb5FbIGDc8H2k3y66lOKn8qq0oY7BMlKR_q4xQ/exec";
 
-/* ==============================
-   HANTAR DATA KE GOOGLE SHEETS
-   ============================== */
 function submitFeedback() {
   let counter = document.getElementById('counter').value;
   let staff = document.getElementById('staff').value;
@@ -186,7 +164,6 @@ function submitFeedback() {
     return;
   }
 
-  // Paparkan loading
   document.getElementById('loadingOverlay').style.display = 'flex';
 
   fetch(scriptURL, {
@@ -200,17 +177,23 @@ function submitFeedback() {
   })
   .then(res => res.json())
   .then(data => {
-    document.getElementById('result').innerText = "Terima kasih atas maklum balas!";
+    const resultText = document.getElementById('result');
+    resultText.innerText = "Terima kasih atas maklum balas!";
+
     document.getElementById('counter').value = "";
     document.getElementById('staff').innerHTML = `<option value="">-- Pilih Kaunter Dulu --</option>`;
     document.getElementById('comment').value = "";
     document.querySelectorAll('.stars span').forEach(s => s.classList.remove('selected'));
     selectedRating = 0;
     document.getElementById('staffPhoto').innerHTML = "";
+
+    // Hilangkan mesej lepas 5 saat
+    setTimeout(() => {
+      resultText.innerText = "";
+    }, 5000);
   })
   .catch(err => alert("Ralat: " + err))
   .finally(() => {
-    // Sembunyikan loading
     document.getElementById('loadingOverlay').style.display = 'none';
   });
 }
