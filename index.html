@@ -40,6 +40,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      margin-top: 30px;
     }
     .form-section textarea {
       width: 80%; padding: 10px; margin: 10px auto; font-size: 16px; display: block;
@@ -118,41 +119,10 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
-    /* Butang utiliti bawah kanan */
-    #utilityButtons {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 999;
-    }
-    .utility-icon {
-      width: 45px;
-      height: 45px;
-      background-color: #fff;
-      border-radius: 50%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background 0.3s;
-      font-size: 22px;
-    }
-    .utility-icon:hover {
-      background-color: #f0f0f0;
-    }
   </style>
 </head>
 <body>
-
-  <!-- Logo -->
   <img src="images/logo-unisel.png" alt="Logo Unisel" class="logo">
-
-  <!-- Container utama -->
   <div class="container">
     <h1>Bagaimana layanan kami?</h1>
 
@@ -163,18 +133,18 @@
       <option value="Bestari Jaya">Bestari Jaya</option>
     </select>
 
-    <div class="stars" id="starRating">
-      <span data-value="1">★</span>
-      <span data-value="2">★</span>
-      <span data-value="3">★</span>
-      <span data-value="4">★</span>
-      <span data-value="5">★</span>
-    </div>
-    <p id="ratingValue">Pilih rating</p>
-
     <div class="staff-gallery" id="staffGallery"></div>
 
     <div class="form-section">
+      <div class="stars" id="starRating">
+        <span data-value="1">★</span>
+        <span data-value="2">★</span>
+        <span data-value="3">★</span>
+        <span data-value="4">★</span>
+        <span data-value="5">★</span>
+      </div>
+      <p id="ratingValue">Pilih rating</p>
+
       <textarea id="comment" placeholder="Komen tambahan..."></textarea>
       <button onclick="submitFeedback()">Hantar</button>
     </div>
@@ -182,122 +152,100 @@
     <p id="result"></p>
   </div>
 
-  <!-- Overlay loading -->
   <div id="loadingOverlay">
     <div class="spinner"></div>
   </div>
 
-  <!-- Butang utiliti bawah kanan -->
-  <div id="utilityButtons">
-    <div class="utility-icon" onclick="location.reload()" title="Refresh">
-      🔄
-    </div>
-    <div class="utility-icon" onclick="toggleFullScreen()" title="Fullscreen">
-      🖥️
-    </div>
-  </div>
+<script>
+let selectedRating = 0;
+let selectedStaff = "";
 
-  <!-- Skrip -->
-  <script>
-    let selectedRating = 0;
-    let selectedStaff = "";
+const staffList = {
+  "Shah Alam": [
+    { name: "Encik Muhammad Arif Bin Mohamad", photo: "images/Muhammad Arif Bin Mohamad.png", counter: "Kaunter 1" },
+    { name: "Encik Muhamad Nur Firdaus Bin Hamidun", photo: "images/Muhamad Nur Firdaus Bin Hamidun.png", counter: "Kaunter 2" },
+    { name: "Puan Anna Solehah Binti A.Kamazar", photo: "images/Anna Solehah Binti A.Kamazar.png", counter: "Kaunter 3" }
+  ],
+  "Bestari Jaya": [
+    { name: "Encik Anuwar Zamani bin Samat", photo: "images/Anuwar Zamani bin Samat.png", counter: "Kaunter 1" },
+    { name: "Puan Noralyda Binti Mohamed Mahkrus", photo: "images/Noralyda Binti Mohamed Mahkrus.png", counter: "Kaunter 2" },
+    { name: "Puan Siti Nur Fatihah binti Ahmad Sabki", photo: "images/Siti Nur Fatihah binti Ahmad Sabki.png", counter: "Kaunter 3" }
+  ]
+};
 
-    const staffList = {
-      "Shah Alam": [
-        { name: "Encik Muhammad Arif Bin Mohamad", photo: "images/Muhammad Arif Bin Mohamad.png", counter: "Kaunter 1" },
-        { name: "Encik Muhamad Nur Firdaus Bin Hamidun", photo: "images/Muhamad Nur Firdaus Bin Hamidun.png", counter: "Kaunter 2" },
-        { name: "Puan Anna Solehah Binti A.Kamazar", photo: "images/Anna Solehah Binti A.Kamazar.png", counter: "Kaunter 3" }
-      ],
-      "Bestari Jaya": [
-        { name: "Encik Anuwar Zamani bin Samat", photo: "images/Anuwar Zamani bin Samat.png", counter: "Kaunter 1" },
-        { name: "Puan Noralyda Binti Mohamed Mahkrus", photo: "images/Noralyda Binti Mohamed Mahkrus.png", counter: "Kaunter 2" },
-        { name: "Puan Siti Nur Fatihah binti Ahmad Sabki", photo: "images/Siti Nur Fatihah binti Ahmad Sabki.png", counter: "Kaunter 3" }
-      ]
+document.querySelectorAll('.stars span').forEach(star => {
+  star.addEventListener('click', function() {
+    selectedRating = this.dataset.value;
+    document.querySelectorAll('.stars span').forEach(s => s.classList.remove('selected'));
+    for (let i = 0; i < selectedRating; i++) {
+      document.querySelectorAll('.stars span')[i].classList.add('selected');
+    }
+    document.getElementById('ratingValue').innerText = "Rating: " + selectedRating;
+  });
+});
+
+function updateStaffGallery() {
+  const counter = document.getElementById('counter').value;
+  const gallery = document.getElementById('staffGallery');
+  gallery.innerHTML = "";
+  selectedStaff = "";
+
+  if (!counter) return;
+
+  staffList[counter].forEach(staff => {
+    const div = document.createElement('div');
+    div.className = 'staff-item';
+    div.innerHTML = `
+      <img src="${staff.photo}" alt="${staff.name}">
+      <div class="staff-name">${staff.name}</div>
+      <div class="staff-counter">[${staff.counter}]</div>
+    `;
+    div.onclick = () => {
+      document.querySelectorAll('.staff-item').forEach(el => el.classList.remove('selected'));
+      div.classList.add('selected');
+      selectedStaff = staff.name;
     };
+    gallery.appendChild(div);
+  });
+}
 
-    document.querySelectorAll('.stars span').forEach(star => {
-      star.addEventListener('click', function() {
-        selectedRating = this.dataset.value;
-        document.querySelectorAll('.stars span').forEach(s => s.classList.remove('selected'));
-        for (let i = 0; i < selectedRating; i++) {
-          document.querySelectorAll('.stars span')[i].classList.add('selected');
-        }
-        document.getElementById('ratingValue').innerText = "Rating: " + selectedRating;
-      });
-    });
+const scriptURL = "https://script.google.com/macros/s/AKfycbw3vv-MdT2l9tPmag3ELeVfIqQMzyBkCb5FbIGDc8H2k3y66lOKn8qq0oY7BMlKR_q4xQ/exec";
 
-    function updateStaffGallery() {
-      const counter = document.getElementById('counter').value;
-      const gallery = document.getElementById('staffGallery');
-      gallery.innerHTML = "";
-      selectedStaff = "";
+function submitFeedback() {
+  const counter = document.getElementById('counter').value;
+  const comment = document.getElementById('comment').value;
 
-      if (!counter) return;
+  if (!counter || !selectedRating || !selectedStaff) {
+    alert("Sila pilih kaunter, rating & staf.");
+    return;
+  }
 
-      staffList[counter].forEach(staff => {
-        const div = document.createElement('div');
-        div.className = 'staff-item';
-        div.innerHTML = `
-          <img src="${staff.photo}" alt="${staff.name}">
-          <div class="staff-name">${staff.name}</div>
-          <div class="staff-counter">[${staff.counter}]</div>
-        `;
-        div.onclick = () => {
-          document.querySelectorAll('.staff-item').forEach(el => el.classList.remove('selected'));
-          div.classList.add('selected');
-          selectedStaff = staff.name;
-        };
-        gallery.appendChild(div);
-      });
-    }
+  document.getElementById('loadingOverlay').style.display = 'flex';
 
-    const scriptURL = "https://script.google.com/macros/s/AKfycbw3vv-MdT2l9tPmag3ELeVfIqQMzyBkCb5FbIGDc8H2k3y66lOKn8qq0oY7BMlKR_q4xQ/exec";
+  fetch(scriptURL, {
+    method: 'POST',
+    body: JSON.stringify({ counter, rating: selectedRating, staff: selectedStaff, comment })
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('result').innerText = "Terima kasih atas maklum balas!";
+    document.getElementById('counter').value = "";
+    document.getElementById('comment').value = "";
+    document.getElementById('staffGallery').innerHTML = "";
+    document.querySelectorAll('.stars span').forEach(s => s.classList.remove('selected'));
+    selectedRating = 0;
+    selectedStaff = "";
+    document.getElementById('ratingValue').innerText = "Pilih rating";
 
-    function submitFeedback() {
-      const counter = document.getElementById('counter').value;
-      const comment = document.getElementById('comment').value;
-
-      if (!counter || !selectedRating || !selectedStaff) {
-        alert("Sila pilih kaunter, rating & staf.");
-        return;
-      }
-
-      document.getElementById('loadingOverlay').style.display = 'flex';
-
-      fetch(scriptURL, {
-        method: 'POST',
-        body: JSON.stringify({ counter, rating: selectedRating, staff: selectedStaff, comment })
-      })
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById('result').innerText = "Terima kasih atas maklum balas!";
-        document.getElementById('counter').value = "";
-        document.getElementById('comment').value = "";
-        document.getElementById('staffGallery').innerHTML = "";
-        document.querySelectorAll('.stars span').forEach(s => s.classList.remove('selected'));
-        selectedRating = 0;
-        selectedStaff = "";
-        document.getElementById('ratingValue').innerText = "Pilih rating";
-
-        setTimeout(() => {
-          document.getElementById('result').innerText = "";
-        }, 5000);
-      })
-      .catch(err => alert("Ralat: " + err))
-      .finally(() => {
-        document.getElementById('loadingOverlay').style.display = 'none';
-      });
-    }
-
-    function toggleFullScreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        }
-      }
-    }
-  </script>
+    setTimeout(() => {
+      document.getElementById('result').innerText = "";
+    }, 5000);
+  })
+  .catch(err => alert("Ralat: " + err))
+  .finally(() => {
+    document.getElementById('loadingOverlay').style.display = 'none';
+  });
+}
+</script>
 </body>
 </html>
