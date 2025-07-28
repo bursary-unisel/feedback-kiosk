@@ -4,7 +4,13 @@
   <meta charset="UTF-8">
   <title>Feedback Rating</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #fef9f4; /* pastel peach */ color: #333; }
+    body { 
+      font-family: Arial, sans-serif; 
+      text-align: center; 
+      padding: 20px; 
+      background-color: #fef9f4; /* pastel peach */ 
+      color: #333; 
+    }
     h1 { color: #333; }
     .stars span { font-size: 50px; cursor: pointer; color: #ccc; }
     .stars span.selected { color: gold; }
@@ -13,6 +19,35 @@
     #result { margin-top: 20px; font-weight: bold; color: green; }
     .staff-photo { margin-top: 10px; }
     .staff-photo img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid #ccc; box-shadow: 0px 4px 10px rgba(0,0,0,0.1); }
+    
+    /* Loading Overlay */
+    #loadingOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    /* Spinner Animation */
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #eee;
+      border-top: 6px solid #6abf69;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -54,13 +89,17 @@
 
   <p id="result"></p>
 
+  <!-- Loading Screen -->
+  <div id="loadingOverlay">
+    <div class="spinner"></div>
+  </div>
+
 <script>
 let selectedRating = 0;
 
 /* ==============================
    SENARAI STAF MENGIKUT KAUNTER
    ============================== */
-// Tukar link photo ke Google Drive direct link
 const staffList = {
   "Shah Alam": [
     { name: "Encik Muhammad Arif Bin Mohamad", photo: "images/Muhammad Arif Bin Mohamad.png" },
@@ -132,7 +171,6 @@ function showStaffPhoto() {
 /* ==============================
    GOOGLE SCRIPT API URL
    ============================== */
-// Ganti dengan URL Apps Script yang kita buat nanti
 const scriptURL = "https://script.google.com/macros/s/AKfycbw3vv-MdT2l9tPmag3ELeVfIqQMzyBkCb5FbIGDc8H2k3y66lOKn8qq0oY7BMlKR_q4xQ/exec";
 
 /* ==============================
@@ -147,6 +185,9 @@ function submitFeedback() {
     alert("Sila pilih kaunter, rating & staf.");
     return;
   }
+
+  // Paparkan loading
+  document.getElementById('loadingOverlay').style.display = 'flex';
 
   fetch(scriptURL, {
     method: 'POST',
@@ -167,7 +208,11 @@ function submitFeedback() {
     selectedRating = 0;
     document.getElementById('staffPhoto').innerHTML = "";
   })
-  .catch(err => alert("Ralat: " + err));
+  .catch(err => alert("Ralat: " + err))
+  .finally(() => {
+    // Sembunyikan loading
+    document.getElementById('loadingOverlay').style.display = 'none';
+  });
 }
 </script>
 </body>
