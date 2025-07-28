@@ -14,11 +14,57 @@
     h1 { color: #333; }
     .stars span { font-size: 50px; cursor: pointer; color: #ccc; }
     .stars span.selected { color: gold; }
-    select, textarea { width: 80%; padding: 10px; margin: 10px; font-size: 16px; }
-    button { padding: 15px 30px; background: green; color: white; font-size: 18px; border: none; cursor: pointer; border-radius: 8px; }
-    #result { margin-top: 20px; font-weight: bold; color: green; transition: opacity 0.5s; }
-    .staff-photo { margin-top: 10px; }
-    .staff-photo img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid #ccc; box-shadow: 0px 4px 10px rgba(0,0,0,0.1); }
+
+    select {
+      width: 80%; padding: 10px; margin: 10px auto; font-size: 16px; display: block;
+    }
+
+    .form-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .form-section textarea {
+      width: 80%;
+      padding: 10px;
+      margin: 10px auto;
+      font-size: 16px;
+      display: block;
+    }
+
+    .form-section button {
+      padding: 15px 30px;
+      background: green;
+      color: white;
+      font-size: 18px;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: block;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
+      transition: opacity 0.5s;
+    }
+
+    .staff-photo {
+      margin-top: 10px;
+    }
+
+    .staff-photo img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ccc;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    }
 
     /* Loading Overlay */
     #loadingOverlay {
@@ -79,10 +125,11 @@
   <!-- Gambar staf -->
   <div class="staff-photo" id="staffPhoto"></div>
 
-  <!-- Komen -->
-  <textarea id="comment" placeholder="Komen tambahan..."></textarea>
-
-  <button onclick="submitFeedback()">Hantar</button>
+  <!-- Komen dan butang hantar -->
+  <div class="form-section">
+    <textarea id="comment" placeholder="Komen tambahan..."></textarea>
+    <button onclick="submitFeedback()">Hantar</button>
+  </div>
 
   <p id="result"></p>
 
