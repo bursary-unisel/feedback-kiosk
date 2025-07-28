@@ -4,36 +4,32 @@
   <meta charset="UTF-8">
   <title>Feedback Rating</title>
   <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      text-align: center; 
-      padding: 20px; 
-      background-color: #fef9f4; 
-      color: #333; 
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: #fef9f4;
+      color: #333;
     }
     h1 { color: #333; }
-    .stars span { font-size: 50px; cursor: pointer; color: #ccc; }
+    .stars span {
+      font-size: 50px;
+      cursor: pointer;
+      color: #ccc;
+    }
     .stars span.selected { color: gold; }
-
     select {
       width: 80%; padding: 10px; margin: 10px auto; font-size: 16px; display: block;
     }
-
     .form-section {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
     }
-
     .form-section textarea {
-      width: 80%;
-      padding: 10px;
-      margin: 10px auto;
-      font-size: 16px;
-      display: block;
+      width: 80%; padding: 10px; margin: 10px auto; font-size: 16px; display: block;
     }
-
     .form-section button {
       padding: 15px 30px;
       background: green;
@@ -45,28 +41,41 @@
       margin-top: 10px;
       display: block;
     }
-
     #result {
       margin-top: 20px;
       font-weight: bold;
       color: green;
       transition: opacity 0.5s;
     }
-
-    .staff-photo {
-      margin-top: 10px;
+    .staff-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
     }
-
-    .staff-photo img {
+    .staff-item {
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 5px;
+      transition: border 0.3s;
+    }
+    .staff-item.selected {
+      border: 2px solid green;
+    }
+    .staff-item img {
       width: 120px;
       height: 120px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid #ccc;
       box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
     }
-
-    /* Loading Overlay */
+    .staff-name {
+      margin-top: 5px;
+      font-size: 14px;
+      font-weight: bold;
+    }
     #loadingOverlay {
       position: fixed;
       top: 0;
@@ -79,7 +88,6 @@
       justify-content: center;
       z-index: 9999;
     }
-
     .spinner {
       width: 60px;
       height: 60px;
@@ -88,7 +96,6 @@
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -98,15 +105,13 @@
 <body>
   <h1>Bagaimana layanan kami?</h1>
 
-  <!-- Pilih kaunter -->
   <label for="counter">Pilih Kaunter:</label><br>
-  <select id="counter" onchange="updateStaffList()">
+  <select id="counter" onchange="updateStaffGallery()">
     <option value="">-- Pilih Kaunter --</option>
     <option value="Shah Alam">Shah Alam</option>
     <option value="Bestari Jaya">Bestari Jaya</option>
   </select>
 
-  <!-- Rating Star -->
   <div class="stars" id="starRating">
     <span data-value="1">★</span>
     <span data-value="2">★</span>
@@ -116,16 +121,8 @@
   </div>
   <p id="ratingValue">Pilih rating</p>
 
-  <!-- Pilih staf -->
-  <label for="staff">Pilih Staf:</label><br>
-  <select id="staff" onchange="showStaffPhoto()">
-    <option value="">-- Pilih Kaunter Dahulu --</option>
-  </select>
+  <div class="staff-gallery" id="staffGallery"></div>
 
-  <!-- Gambar staf -->
-  <div class="staff-photo" id="staffPhoto"></div>
-
-  <!-- Komen dan butang hantar -->
   <div class="form-section">
     <textarea id="comment" placeholder="Komen tambahan..."></textarea>
     <button onclick="submitFeedback()">Hantar</button>
@@ -133,13 +130,13 @@
 
   <p id="result"></p>
 
-  <!-- Loading Screen -->
   <div id="loadingOverlay">
     <div class="spinner"></div>
   </div>
 
 <script>
 let selectedRating = 0;
+let selectedStaff = "";
 
 const staffList = {
   "Shah Alam": [
@@ -165,48 +162,34 @@ document.querySelectorAll('.stars span').forEach(star => {
   });
 });
 
-function updateStaffList() {
-  let counter = document.getElementById('counter').value;
-  let staffSelect = document.getElementById('staff');
-  staffSelect.innerHTML = "";
-  document.getElementById('staffPhoto').innerHTML = "";
+function updateStaffGallery() {
+  const counter = document.getElementById('counter').value;
+  const gallery = document.getElementById('staffGallery');
+  gallery.innerHTML = "";
+  selectedStaff = "";
 
-  if (!counter) {
-    staffSelect.innerHTML = `<option value="">-- Pilih Kaunter Dulu --</option>`;
-    return;
-  }
+  if (!counter) return;
 
-  let staffs = staffList[counter];
-  staffSelect.innerHTML = `<option value="">-- Pilih Staf --</option>`;
-  staffs.forEach(staff => {
-    let opt = document.createElement("option");
-    opt.value = staff.name;
-    opt.textContent = staff.name;
-    opt.setAttribute("data-photo", staff.photo);
-    staffSelect.appendChild(opt);
+  staffList[counter].forEach(staff => {
+    const div = document.createElement('div');
+    div.className = 'staff-item';
+    div.innerHTML = `<img src="${staff.photo}" alt="${staff.name}"><div class="staff-name">${staff.name}</div>`;
+    div.onclick = () => {
+      document.querySelectorAll('.staff-item').forEach(el => el.classList.remove('selected'));
+      div.classList.add('selected');
+      selectedStaff = staff.name;
+    };
+    gallery.appendChild(div);
   });
-}
-
-function showStaffPhoto() {
-  let staffSelect = document.getElementById('staff');
-  let selectedOption = staffSelect.options[staffSelect.selectedIndex];
-  let photoURL = selectedOption.getAttribute('data-photo');
-
-  if (photoURL) {
-    document.getElementById('staffPhoto').innerHTML = `<img src="${photoURL}" alt="Staff Photo">`;
-  } else {
-    document.getElementById('staffPhoto').innerHTML = "";
-  }
 }
 
 const scriptURL = "https://script.google.com/macros/s/AKfycbw3vv-MdT2l9tPmag3ELeVfIqQMzyBkCb5FbIGDc8H2k3y66lOKn8qq0oY7BMlKR_q4xQ/exec";
 
 function submitFeedback() {
-  let counter = document.getElementById('counter').value;
-  let staff = document.getElementById('staff').value;
-  let comment = document.getElementById('comment').value;
+  const counter = document.getElementById('counter').value;
+  const comment = document.getElementById('comment').value;
 
-  if (counter == "" || selectedRating == 0 || staff == "") {
+  if (!counter || !selectedRating || !selectedStaff) {
     alert("Sila pilih kaunter, rating & staf.");
     return;
   }
@@ -215,28 +198,21 @@ function submitFeedback() {
 
   fetch(scriptURL, {
     method: 'POST',
-    body: JSON.stringify({
-      counter: counter,
-      rating: selectedRating,
-      staff: staff,
-      comment: comment
-    })
+    body: JSON.stringify({ counter, rating: selectedRating, staff: selectedStaff, comment })
   })
   .then(res => res.json())
   .then(data => {
-    const resultText = document.getElementById('result');
-    resultText.innerText = "Terima kasih atas maklum balas!";
-
+    document.getElementById('result').innerText = "Terima kasih atas maklum balas!";
     document.getElementById('counter').value = "";
-    document.getElementById('staff').innerHTML = `<option value="">-- Pilih Kaunter Dulu --</option>`;
     document.getElementById('comment').value = "";
+    document.getElementById('staffGallery').innerHTML = "";
     document.querySelectorAll('.stars span').forEach(s => s.classList.remove('selected'));
     selectedRating = 0;
+    selectedStaff = "";
     document.getElementById('ratingValue').innerText = "Pilih rating";
-    document.getElementById('staffPhoto').innerHTML = "";
 
     setTimeout(() => {
-      resultText.innerText = "";
+      document.getElementById('result').innerText = "";
     }, 5000);
   })
   .catch(err => alert("Ralat: " + err))
