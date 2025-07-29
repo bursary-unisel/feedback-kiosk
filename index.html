@@ -325,7 +325,7 @@
       })
       .then(res => res.json())
       .then(data => {
-        document.getElementById('result').innerText = "Terima kasih atas maklum balas!";
+        document.getElementById('result').innerText = "Thank you for your feedback!";
         document.getElementById('comment').value = "";
         document.getElementById('staffGallery').innerHTML = "";
         document.querySelectorAll('.stars span').forEach(s => s.classList.remove('selected'));
