@@ -29,10 +29,10 @@
 
     .radio-group {
       margin: 15px 0;
+      font-size: 16px;
     }
     .radio-group label {
       margin: 0 20px;
-      font-size: 16px;
     }
 
     .stars {
@@ -142,11 +142,6 @@
       animation: spin 1s linear infinite;
     }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
     .corner-buttons {
       position: fixed;
       bottom: 20px;
@@ -186,6 +181,7 @@
       max-width: 90%;
       text-align: center;
     }
+
     .custom-alert button {
       margin-top: 15px;
       padding: 8px 18px;
@@ -203,6 +199,7 @@
     <h1>Bagaimana layanan kami?</h1>
 
     <div class="radio-group">
+      <strong>Pilih Kampus:</strong>
       <label><input type="radio" name="kampus" value="Shah Alam" onchange="updateStaffGallery()"> Shah Alam</label>
       <label><input type="radio" name="kampus" value="Bestari Jaya" onchange="updateStaffGallery()"> Bestari Jaya</label>
     </div>
@@ -225,9 +222,7 @@
     <p id="result"></p>
   </div>
 
-  <div id="loadingOverlay">
-    <div class="spinner"></div>
-  </div>
+  <div id="loadingOverlay"><div class="spinner"></div></div>
 
   <div class="custom-alert" id="alertBox">
     <div id="alertMsg">Teks alert di sini</div>
@@ -236,7 +231,6 @@
 
   <div class="corner-buttons">
     <button onclick="toggleFullscreen()" title="Fullscreen">🖥️</button>
-    <button onclick="location.reload()" title="Refresh">🔄</button>
   </div>
 
   <script>
