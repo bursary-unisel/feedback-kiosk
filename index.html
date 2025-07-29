@@ -306,7 +306,7 @@
       const counter = getSelectedKampus();
       const comment = document.getElementById('comment').value;
       if (!counter || !selectedRating || !selectedStaff) {
-        showAlert("Sila pilih Kampus, Staf & Rating.");
+        showAlert("Please select Campus, Staff & Rating.");
         return;
       }
       document.getElementById('loadingOverlay').style.display = 'flex';
